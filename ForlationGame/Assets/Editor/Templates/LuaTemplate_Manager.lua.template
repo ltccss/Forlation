@@ -1,0 +1,11 @@
+---@class #LuaClass : BaseMgr
+#LuaClass = DefineInheritedClass(#LuaClass, BaseMgr)
+
+
+function #LuaClass:_OnInit()
+    -- todo 需要在FF_Init.lua中自行调用Init()方法
+end
+
+function #LuaClass:_OnDestroy()
+    -- todo 需要在FF_Destroy.lua中自行调用Destroy()方法
+end

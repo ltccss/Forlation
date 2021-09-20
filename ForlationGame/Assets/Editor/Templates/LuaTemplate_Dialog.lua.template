@@ -1,0 +1,30 @@
+---@class #LuaClass : BaseDlg
+#LuaClass = DefineInheritedClass(#LuaClass, BaseDlg)
+
+---@return string
+function #LuaClass:GetPrefabPath()
+    -- todo (prefab路径可以通过右键菜单 - Copy Path获取)
+    return nil
+end
+
+---@return string
+function #LuaClass:GetLayerName()
+    -- todo
+    return DlgLayer.Middle
+end
+
+function #LuaClass:_OnInit()
+    -- todo
+end
+
+function #LuaClass:_OnVisible(visible)
+    -- todo
+end
+
+function #LuaClass:_OnWillClose()
+    -- todo
+end
+
+function #LuaClass:_OnDestroy()
+    -- todo
+end

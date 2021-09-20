@@ -1,0 +1,23 @@
+-- 文件功能描述
+-- 期望变量
+-- 本地变量
+-- 生命周期
+function initComplete()
+end
+function awake()
+end
+function start()
+end
+function onenable()
+end
+function ondisable()
+end
+function update()
+end
+function lateupdate()
+end
+function ondestroy()
+end
+-- 对外接口
+-- 回调函数
+-- 私有函数

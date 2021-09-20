@@ -1,0 +1,8 @@
+---@class #LuaClass : BaseViewWrapper
+#LuaClass = DefineInheritedClass(#LuaClass, BaseViewWrapper)
+
+function #LuaClass:_OnInit()
+end
+
+function #LuaClass:_OnDestroy()
+end
