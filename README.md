@@ -7,6 +7,7 @@ Forlation是一个基于Unity/xLua设计的简易游戏框架，旨在提供高�
 
 **在您考虑使用脚本语言编写您的游戏时，极力推荐您使用[Puerts](https://github.com/Tencent/puerts)/[TypeScript](https://www.typescriptlang.org/docs/)而不是各类Lua框架**
 
+[完整文档](https://github.com/ltccss/ForlationDoc) (施工中)
 
 ## 特性速览：
 
