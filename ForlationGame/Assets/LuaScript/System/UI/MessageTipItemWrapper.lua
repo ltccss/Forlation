@@ -36,7 +36,6 @@ function MessageTipItemWrapper:_Hide()
 end
 
 function MessageTipItemWrapper:_Recycle()
-    LogUtil.Warn("1111")
     self._dlg:RecycleTipWrapper(self)
 end
 

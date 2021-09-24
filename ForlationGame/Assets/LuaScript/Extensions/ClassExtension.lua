@@ -2,6 +2,21 @@ local _Class_Tag = "@cls#^##$#$"
 local _Class_Instance_Tag = "@ins#$@%%^"
 local _Class_BaseAgent_Tag = "@base$%^#$$"
 
+
+if (getmetatable(_G)) then
+    LogUtil.Warn("G表的元表将被重新赋值")
+end
+
+---@type table<any, string>
+local _globalDefineTable = {}
+
+setmetatable(_G, {
+    __newindex = function(t, k, v) 
+        _globalDefineTable[v] = k
+        rawset(t, k, v)
+    end
+})
+
 local function _DefineRawClass(class)
     class = class or {}
     if (class[_Class_Tag]) then
@@ -172,8 +187,18 @@ function GetBaseClass(instanceOrClass)
     return nil
 end
 
+---@return string
+function GetClassName(class)
+    if (class[_Class_Tag]) then
+        return _globalDefineTable[class]
+    else
+        LogUtil.Error("传入的不是class")
+        return nil
+    end
+end
 
----@class XObject @所有通过该套OOP系统创建出来的实例都会自动继承自该类，方便塞一些辅助方法，注解里如果不用则无需声明此基类
+
+---@class XObject @所有通过该套OOP系统创建出来的实例都会自动继承自该类，方便塞一些通用的基类方法，如果不使用这些基类方法则无需在注解中声明此基类
 XObject = _DefineRawClass(XObject)
 
 
@@ -229,15 +254,3 @@ function XObject:ToBase(baseClass)
 
     return baseAgent
 end
-
----@class Animal : XObject
-Animal = DefineClass(Animal)
-function Animal:Eat()
-end
-
----@class Cat:Animal
-Cat = DefineInheritedClass(Cat, Animal)
-function Cat:Eat()
-end
-
-local oneCat = CCC(Cat)

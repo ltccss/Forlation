@@ -87,5 +87,4 @@ function MessageTip:RecycleTipWrapper(tipWrapper)
 
     table.insert(self._recycledTipWrapperArray, tipWrapper)
     tipWrapper:GetXRoot().transform:SetParent(self._recycle)
-    LogUtil.WarnObject("22222", tipWrapper:GetXRoot())
 end

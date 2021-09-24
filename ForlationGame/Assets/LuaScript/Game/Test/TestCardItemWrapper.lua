@@ -31,7 +31,13 @@ function TestCardItemWrapper:_OnInit()
     self._scrollRect.onValueChanged:AddListener(self._func);
 
     self:_AddTestFunc("测试方法1", function() 
-        MessageTip.Pop("名字: " .. self._cardData.name)
+        if (self._cardData) then
+            MessageTip.Pop("名字: " .. self._cardData.name)
+        else
+            MessageTip.Pop("这是个填充用item")
+        end
+        
+        LogUtil.Warn(">>>> " .. GetClassName(TestCardItemWrapper))
     end)
 end
 
