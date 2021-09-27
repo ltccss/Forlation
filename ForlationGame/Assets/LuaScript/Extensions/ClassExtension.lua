@@ -111,9 +111,9 @@ function ForceUnlinkAllAliveRefs()
     end
 end
 
----  打印指定类的所有实例（包含子类）
+--- 打印指定类的所有实例（包含子类）的创建堆栈
 ---@param class  any @不填默认打印所有class的实例
-function DebugShowClassInstances(class)
+function DebugShowClassInstanceTrace(class)
     CS.CommonUtil.GC();
 
     LogUtil.Log("============== start ===============")
@@ -126,16 +126,52 @@ function DebugShowClassInstances(class)
     LogUtil.Log("============== end ===============")
 end
 
+--- 显示当前所有类实例的数量统计
+function DebugShowClassInstanceStats()
+    CS.CommonUtil.GC();
+
+    local classTable = {}
+    for k, v in pairs(_weakObjTable) do
+        
+        local class = GetClass(v)
+        if (not classTable[class]) then
+            classTable[class] = 0
+        end
+        classTable[class] = classTable[class] + 1
+    end
+
+    LogUtil.Log("============== start ===============")
+
+    for class, count in pairs(classTable) do
+        LogUtil.LogFormat("class name : {0}, count : {1}", GetClassName(class), count)
+    end
+
+    LogUtil.Log("============== end ===============")
+end
+
+--- 获取类实例的创建堆栈
 function DebugGetClassInstanceTrace(instance)
     return _weakObjTraceTable[instance] or "instance create trace not found"
 end
 
+--- 获取函数的生成堆栈
 function DebugGetFunctionTrace(func)
     return _weakFuncTraceTable[func] or "function trace not found"
 end
 
+--- 记录函数的生成堆栈（应在生成后调用记录）
 function DebugRecordFunctionTrace(func)
     _weakFuncTraceTable[func] = debug.traceback()
+end
+
+function DebugShowNonClassGlobalDefines()
+    LogUtil.Log("========= start ========")
+    for obj, objName in pairs(_globalDefineTable) do
+        if (type(obj) ~= 'table' or not obj[_Class_Tag]) then
+            LogUtil.Log("name : " .. objName .. " type : " .. type(obj))
+        end
+    end
+    LogUtil.Log("========= error ========")
 end
 
 ---@param obj any
@@ -195,6 +231,12 @@ function GetClassName(class)
         LogUtil.Error("传入的不是class")
         return nil
     end
+end
+
+---@param className string
+---@return class
+function GetClassByName(className)
+    return _G[className]
 end
 
 

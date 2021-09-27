@@ -9,7 +9,7 @@
 TestDlg = DefineInheritedClass(TestDlg, BaseDlg)
 
 function TestDlg:GetPrefabPath()
-    return "Assets/Assets_UI/Prefabs/Test/TestDlg.prefab"
+    return "Assets/Assets_UI/Test/Prefabs/TestDlg.prefab"
 end
 
 function TestDlg:_OnInit()
@@ -62,7 +62,7 @@ function TestDlg:_OnInit()
     self:_ListenCommonLifeCycleEvent()
     self:_ListenApplicationPauseLifeCycleEvent()
 
-    self:Delay(2, function()
+    self:Delay(0.5, function()
         self:_UnlistenUpdateLifeCycleEvent();
         self:_UnlistenLateUpdateLifeCycleEvent();
         self:_UnlistenFixedUpdateLifeCycleEvent();
@@ -99,9 +99,6 @@ function TestDlg:_TestTimer()
 end
 
 function TestDlg:_OnDestroy()
-    LogUtil.Log("test ondestroy")
-    TestDlg.delegate:Execute();
-
     for k in pairs(self._cardWrapperTable) do
         self._cardWrapperTable[k]:Destroy();
         self._cardWrapperTable[k] = nil;

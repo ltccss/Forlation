@@ -66,6 +66,14 @@ require("Game/Remind/RemindType")
 require("Game/Remind/RemindNode")
 require("Game/Remind/RemindMgr")
 
+-- Dev
+require("Game/Dev/DevButtonExItemWrapper")
+require("Game/Dev/DevButtonItemWrapper")
+require("Game/Dev/DevCategoryItemWrapper")
+require("Game/Dev/DevDlg")
+require("Game/Dev/DevMenuDlg")
+
+
 -- Game Custom
 require("Game/Test/TestCardItemWrapper")
 require("Game/Test/TestDlg")

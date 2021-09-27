@@ -18,6 +18,9 @@ function LuaGameManager:Init()
     self._gameLoadMgr:Init(function()
         DlgMgr.FetchDlg(TestDlg);
         
+        if (CS.AppSetting.runningMode == "debug") then
+            DlgMgr.FetchDlg(DevMenuDlg)
+        end
     end)
 
     self.Event_AnyKeyPressed = CCC(LuaDelegate);
