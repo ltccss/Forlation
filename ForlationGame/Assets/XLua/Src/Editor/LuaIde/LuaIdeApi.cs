@@ -196,7 +196,7 @@ namespace Assets.XLua.Src.Editor.LuaIde
 
             foreach (var kvp in rootNameSpaceDict)
             {
-                AppendNameSpaceStr(kvp.Value, npSb);
+                AppendNameSpaceStr(kvp.Value, npSb, true);
             }
 
             string nameSpaceFilePath = Path.Combine(luaIdeDirPath, "_NameSpace.lua");
@@ -266,7 +266,7 @@ namespace Assets.XLua.Src.Editor.LuaIde
             return false;
         }
 
-        static void AppendNameSpaceStr(NameSpaceNode node, StringBuilder sb)
+        static void AppendNameSpaceStr(NameSpaceNode node, StringBuilder sb, bool isRoot)
         {
             if (node.tree.Count > 0)
             {
@@ -276,11 +276,16 @@ namespace Assets.XLua.Src.Editor.LuaIde
                     sb.AppendLine(string.Format("---@field {0} {1}", kvp.Value.node, kvp.Value.fullName));
                 }
 
+                if (isRoot)
+                {
+                    sb.AppendLine(string.Format("{0} = {{}}", node.fullName));
+                }
+
                 sb.AppendLine("");
 
                 foreach (var kvp in node.tree)
                 {
-                    AppendNameSpaceStr(kvp.Value, sb);
+                    AppendNameSpaceStr(kvp.Value, sb, false);
                 }
             }
 
