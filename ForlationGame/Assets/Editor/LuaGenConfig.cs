@@ -211,6 +211,9 @@ public static class ExampleGenConfig
                 typeof(ForlationGameManager),
                 typeof(AssetsManager),
 
+                // test
+                typeof(List<string>),
+
                 typeof(Screen),
 
             };
@@ -222,6 +225,7 @@ public static class ExampleGenConfig
                 typeof(Func<double, double, double>),
                 typeof(Action<string>),
                 typeof(Action<double>),
+                typeof(Action<bool>),
                 typeof(Action<UnityEngine.Object>),
                 typeof(UnityEngine.Events.UnityAction),
                 typeof(UnityEngine.Events.UnityAction<int>),

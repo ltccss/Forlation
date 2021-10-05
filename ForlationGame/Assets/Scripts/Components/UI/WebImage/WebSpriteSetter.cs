@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 [RequireComponent(typeof(Image))]
 public class WebSpriteSetter : MonoBehaviour
 {
     [Header("右键组件-Show 在Editor中显示图片")]
-    public string url;
+    [SerializeField]
+    private string _url;
     [Header("是否需要调整尺寸")]
     public bool needResize = true;
     [Header("等比例缩放至指定宽")]
@@ -18,24 +20,34 @@ public class WebSpriteSetter : MonoBehaviour
     public bool overflow = true;
     public bool autoLoad = true;
 
-    [Header("在第一次图片下载并加载后显示")]
+    [Header("加载中隐藏，加载后显示的物件")]
     public GameObject[] showAfterLoadObjects;
-    [Header("在第一次图片下载并加载后隐藏")]
+    [Header("加载中显示，加载后隐藏的物件")]
     public GameObject[] hideAfterLoadObjects;
+
+    public Action<bool> Event_ImageLoaded;
 
     private WebImageDownloader _downloader;
 
     private void OnEnable()
     {
-        if ((this._downloader == null || !this._downloader.Done || this._downloader.Url != this.url) && this.autoLoad)
+        if ((this._downloader == null || !this._downloader.Done || this._downloader.Url != this._url) && this.autoLoad)
         {
             this.RefreshWebImage();
         }
     }
 
+    public string Url
+    {
+        get
+        {
+            return this._url;
+        }
+    }
+
     public void ShowWebImage(string url, bool resize)
     {
-        this.url = url;
+        this._url = url;
         this.needResize = resize;
         if (this.gameObject.activeInHierarchy)
         {
@@ -43,7 +55,7 @@ public class WebSpriteSetter : MonoBehaviour
         }
     }
 
-    public void SetSprite(Sprite sprite)
+    private void SetSprite(Sprite sprite)
     {
         var image = this.GetComponent<Image>();
         image.sprite = sprite;
@@ -51,13 +63,12 @@ public class WebSpriteSetter : MonoBehaviour
         {
             WebImageResizer.Resize(this.transform as RectTransform, this.fitToWidth, this.fitToHeight, this.overflow, (int)sprite.rect.width, (int)sprite.rect.height);
         }
-        this.ToggleObjects(true);
     }
 
     [ContextMenu("Show")]
     public void RefreshWebImage()
     {
-        if (string.IsNullOrEmpty(this.url))
+        if (string.IsNullOrEmpty(this._url))
         {
             return;
         }
@@ -69,12 +80,25 @@ public class WebSpriteSetter : MonoBehaviour
         {
             return;
         }
-        this._downloader = WebImageDownloader.Create(this.url, this, () =>
+        this.ToggleObjects(false);
+        this._downloader = WebImageDownloader.Create(this._url, this, () =>
         {
             if (string.IsNullOrEmpty(this._downloader.Error))
             {
                 Sprite sprite = this._downloader.ToSprite();
                 this.SetSprite(sprite);
+                this.ToggleObjects(true);
+                if (this.Event_ImageLoaded != null)
+                {
+                    this.Event_ImageLoaded(true);
+                }
+            }
+            else
+            {
+                if (this.Event_ImageLoaded != null)
+                {
+                    this.Event_ImageLoaded(false);
+                }
             }
         });
         this._downloader.StartDownloadImage();
@@ -97,5 +121,12 @@ public class WebSpriteSetter : MonoBehaviour
                 this.showAfterLoadObjects[i].SetActive(isLoaded);
             }
         }
+    }
+
+    [ContextMenu("Clear")]
+    public void Clear()
+    {
+        this._url = null;
+        this.SetSprite(null);
     }
 }
