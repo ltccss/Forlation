@@ -12,7 +12,7 @@
 ---@field _visible bool
 ---@field _isFullScreen bool
 ---@field _isUnderFullScreen bool
----@field _becomeFullScreenTimer TimerHandle
+---@field _holdFullScreenTimer TimerHandle
 BaseDlg = DefineInheritedClass(BaseDlg, BaseViewWrapper)
 
 ---@param prefabPath string @暂定todo
@@ -133,12 +133,20 @@ end
 
 function BaseDlg:Show()
     self._isShowing = true;
+    DlgMgr.OnDlgShow(self);
     self:_UpdateVisibility();
+    if (self._isFullScreen) then
+        DlgMgr.UpdateFullScreenState();
+    end
 end
 
 function BaseDlg:Hide()
     self._isShowing = false;
+    DlgMgr.OnDlgHide(self);
     self:_UpdateVisibility();
+    if (self._isFullScreen and not self._isUnderFullScreen) then
+        DlgMgr.UpdateFullScreenState();
+    end
 end
 
 ---@param isUnderFullScreen bool
@@ -167,14 +175,12 @@ function BaseDlg:_UpdateVisibility()
     end
     
     if (self._visible) then
-        DlgMgr.OnDlgShow(self);
         self._xRoot.gameObject:SetActive(true)
         self:AdjustToTop()
         self:_OnVisible(true)
         -- canvas在隐藏后再次开启不强制重设下order会有问题
         self._canvas.sortingOrder = self._canvas.sortingOrder;
     else
-        DlgMgr.OnDlgHide(self);
         self._xRoot.gameObject:SetActive(false)
         self:_OnVisible(false)
     end
@@ -209,12 +215,12 @@ function BaseDlg:Close(immediate)
     and NotNull(self._xRoot) 
     and self._xRoot.gameObject.activeInHierarchy then
         self._dialogAnim:PlayCloseAnim(function()
-            DlgMgr.OnDlgHide(self)
+            self:Hide()
             self:Destroy()
             DlgMgr.Event_DlgClose:Execute(self);
         end)
     else
-        DlgMgr.OnDlgHide(self)
+        self:Hide()
         self:Destroy()
         DlgMgr.Event_DlgClose:Execute(self);
     end
@@ -226,22 +232,24 @@ function BaseDlg:_OnWillClose()
 end
 
 --- 切换成全屏，全屏dlg下的所有dlg都将被隐藏，并且当页面系统中有全屏dlg时，也会通知外部系统进行相关操作（比如隐藏底层场景优化性能）
+--- 注意：因为页面可能会带出入场动效，比如在页面刚创建时可能实际显示上尚不能遮盖住下方内容，所以需要自行寻找合适的时机，去切换全屏状态
+--- 一般推荐在入场动效结束后（可以是动效回调，可以直接延迟）开启全屏，在出场动效开始时（一般既页面即将关闭时），关闭全屏
 ---@param toFullScreen bool
 ---@param delay number @切换成全屏的延迟，不填默认0，延迟只对切换成全屏状态有效，对从全屏状态退回无效
-function BaseDlg:BecomeFullScreen(toFullScreen, delay)
+function BaseDlg:HoldFullScreen(toFullScreen, delay)
     if (not DlgMgr.IsEnable()) then
         return;
     end
     delay = delay or 0;
-    -- todo : 理论上在每个界面Hide/Show的时候还要DlgMgr.UpdateMainDlgVisibility();一下，现在懒得弄了
-    self._becomeFullScreenTimer = self:ClearTimer(self._becomeFullScreenTimer);
+
+    self._holdFullScreenTimer = self:ClearTimer(self._holdFullScreenTimer);
     if (toFullScreen) then
         if (delay <= 0) then
             delay = 0.001;
         end
 
-        -- 无论如何，都至少延迟到下一帧执行，方便在OnInit里就调用BecomeFullScreen(true)的情况
-        self._becomeFullScreenTimer = self:Delay(delay, function()
+        -- 无论如何，都至少延迟到下一帧执行，方便在OnInit里就调用HoldFullScreen(true)的情况
+        self._holdFullScreenTimer = self:Delay(delay, function()
             if (not self._closed) then
                 self._isFullScreen = true;
                 DlgMgr.UpdateFullScreenState();

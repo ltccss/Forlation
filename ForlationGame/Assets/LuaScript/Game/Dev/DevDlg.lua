@@ -55,6 +55,8 @@ function DevDlg:_OnInit()
     self:_RefreshCategory();
 
     self:SwitchToCategory(_lastCategoryName);
+
+    self:HoldFullScreen(true, 1)
 end
 
 function DevDlg:_OnVisible(visible)
@@ -175,6 +177,13 @@ function DevDlg:_InitDevItems()
 
     self:_AddDevButton("", "热重启", function()
         luaGameManager:ReloadGame();
+    end);
+
+    self:_AddDevButton("", "全屏遮蔽测试", function()
+        self:Hide()
+        self:Delay(3, function() 
+            self:Show()
+        end)
     end);
 
     self:_AddDevButton("诊断", "显示泄露的Wrapper", function()

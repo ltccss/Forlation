@@ -42,6 +42,7 @@ local _uiEnable = false;
 ---@type table<DlgClass, BaseDlg[]>
 local _existedDlgDict = {}
 
+--- 逻辑上显示的页面数组
 ---@type BaseDlg[]
 local _showedDlgArray = {}
 
@@ -287,9 +288,10 @@ function DlgMgr.UpdateFullScreenState()
         if (hasFullScreenDlg) then
             _showedDlgArray[i]:SetUnderFullScreen(true)
         else
-            if (_showedDlgArray[i]:IsFullScreen()) then
+            if (_showedDlgArray[i]:IsFullScreen() and _showedDlgArray[i]:IsVisible()) then
                 hasFullScreenDlg = true;
             end
+            _showedDlgArray[i]:SetUnderFullScreen(false)
         end
     end
 
@@ -304,8 +306,12 @@ end
 
 local function _SortDelay(_)
     table.sort(_showedDlgArray, _CompareShowedDlg)
+    local order = 1
     for i = 1, #_showedDlgArray do
-        _showedDlgArray[i]:SetDlgSortingOder(i);
+        if (_showedDlgArray[i]:IsVisible()) then
+            _showedDlgArray[i]:SetDlgSortingOder(order);
+            order = order + 1
+        end
     end
 end
 
@@ -323,6 +329,8 @@ function DlgMgr.GetLogicHeight()
     return _root.rect.height;
 end
 
+--- 获取逻辑上显示的页面，
+--- 若要获取实际上显示的页面，请使用dlg:IsVisible()过滤返回结果
 ---@return BaseDlg[]
 function DlgMgr.GetShowedDlgArray()
     return _showedDlgArray;

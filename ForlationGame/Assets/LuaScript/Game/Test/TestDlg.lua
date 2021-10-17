@@ -13,7 +13,7 @@ function TestDlg:GetPrefabPath()
 end
 
 function TestDlg:_OnInit()
-    -- self:BecomeFullScreen(true, 1);
+    -- self:HoldFullScreen(true, 1);
 
     self._titleText = self:GetUIText("Text_Title")
     self._contentText = self:GetUIText("Text_Content")
@@ -108,7 +108,7 @@ function TestDlg:_OnDestroy()
 end
 
 function TestDlg:_OnWillClose()
-    -- self:BecomeFullScreen(false);
+    -- self:HoldFullScreen(false);
 end
 
 function TestDlg:_OnCsAwake()
