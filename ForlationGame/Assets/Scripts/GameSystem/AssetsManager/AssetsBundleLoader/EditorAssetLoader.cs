@@ -99,23 +99,16 @@ class EditorAssetLoader : BaseAssetLoader
     public override bool IsFileExist(string fileName)
     {
 #if UNITY_EDITOR
-        string extName = Path.GetExtension(fileName);
-        if (extName == ".bnk")
+        // TODO: 可能有非AB文件
+        string[] bundleNames = AssetDatabase.GetAllAssetBundleNames();
+        for (int i = 0; i < bundleNames.Length; i++)
         {
-            return File.Exists(Path.Combine(Application.dataPath, "Audio/GeneratedSoundBanks/Android", fileName));
-        }
-        else
-        {
-            string[] bundleNames = AssetDatabase.GetAllAssetBundleNames();
-            for (int i = 0; i < bundleNames.Length; i++)
+            if (bundleNames[i] == fileName)
             {
-                if (bundleNames[i] == fileName)
-                {
-                    return true;
-                }
+                return true;
             }
-            return false;
         }
+        return false;
 #else
         throw new NotImplementedException();
 #endif
