@@ -93,7 +93,27 @@ public class AppSetting
 #else
     public static readonly bool loadLuaDirectlyInSimulatePhoneMode = false;
 #endif
-    
+
+    // TODO: 下载热更还未实现
+
+    /// <summary>
+    /// TODO: 需要自行配置各种资源下载地址
+    /// </summary>
+    public static readonly string resUrl = "http://hostname.com/res/{0}"; // 参数0是资源文件名
+
+    /// <summary>
+    /// TODO:资源集合名数组，这个参数应该在版本查询时获得
+    /// </summary>
+    public static string[] resCollectionNames = new string[] { "test1", "test2"};
+
+    /// <summary>
+    /// 资源集合清单目录的url
+    /// </summary>
+    public static readonly string resCollectionUrl = "http://hostname.com/resv/{0}/{1}/"; // 参数0是资源集合名，参数1是资源集合版本号
+
+    public static readonly string luaUrl = "http://hostname.com/lua/{0}/"; // 参数0是lua文件（包）版本号
+
+    public static readonly string cfgUrl = "http://hostname.com/cfg/{0}/"; // 参数0是配置文件（包）版本号
 
     /// <summary>
     /// 沙盒缓存目录下lua文件名
@@ -141,7 +161,8 @@ public class AppSetting
                 }
                 else
                 {
-                    // TODO: 安卓这个目录会暴露给用户，正式版最好换成内部缓存目录，context.getFilesDir()
+                    // TODO: 安卓这个目录会暴露给用户，这里建议换成内部缓存目录，
+                    // Unity没提供直接Api，需要Porting一下：context.getFilesDir()
                     return Application.persistentDataPath;
                 }
 
