@@ -43,6 +43,7 @@ end
 function Queue:Enqueue(e)
     self._array[self._endIndex] = e;
     self._endIndex = self._endIndex + 1;
+    -- TODO: endIndex到达整型最大上限时尝试调整startIndex和endIndex
 end
 
 function Queue:Dequeue()

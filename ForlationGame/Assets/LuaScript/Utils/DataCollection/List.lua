@@ -127,7 +127,7 @@ function List:Clear()
     self._count = 0
 end
 
----@param compareFunc fun(a, b)
+---@param compareFunc fun(a, b): boolean
 function List:Sort(compareFunc)
     table.sort(self._array, compareFunc)
 end
@@ -141,6 +141,7 @@ function List:Find(matchFunc)
     return nil
 end
 
+---@param matchFunc fun(item: any): boolean
 ---@return array
 function List:FindAll(matchFunc)
     local o = {}
